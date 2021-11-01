@@ -1,3 +1,4 @@
+//For more icons access: https://heroicons.com/
 export const IconHome = (
   <svg
     xmlns="http://www.w3.org/2000/svg"

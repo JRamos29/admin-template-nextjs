@@ -1,8 +1,10 @@
 import AuthInput from '../components/auth/AuthInput';
 import { useState } from 'react';
+import { IconWarning } from '../components/icons/index';
 
 export default function Auth() {
   const [mode, setMode] = useState<'login' | 'signup'>('login');
+  const [error, setError] = useState(null);
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
@@ -10,9 +12,16 @@ export default function Auth() {
   function submit() {
     if (mode === 'login') {
       console.log('login');
+      showError('Login Error');
     } else {
       console.log('signup');
+      showError('Sign-Up Error');
     }
+  }
+
+  function showError(message, seconds = 5) {
+    setError(message);
+    setTimeout(() => setError(null), seconds * 1000);
   }
 
   return (
@@ -30,6 +39,21 @@ export default function Auth() {
             ? 'Login to access your account'
             : 'Sign-up to create an account'}
         </h1>
+        {error ? (
+          <div
+            className={`
+          flex items-center
+          bg-red-400 text-white py-3 px-5 my-2
+          border border-red-700 rounded-lg
+        `}
+          >
+            {IconWarning()}
+            <span className={`ml-3`}>{error}</span>
+          </div>
+        ) : (
+          false
+        )}
+
         <AuthInput
           label="Email"
           type="email"

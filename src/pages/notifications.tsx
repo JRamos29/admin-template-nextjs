@@ -2,11 +2,11 @@ import Layout from '../components/template/Layout';
 import useAppData from '../data/hook/useAppData';
 
 export default function Notifications() {
-  const ctx = useAppData();
+  const { switchTheme } = useAppData();
 
   return (
     <Layout title="Notifications Page" subtitle="Manage your notifications...">
-      <h3>{ctx.name}</h3>
+      <button onClick={switchTheme}>Switch Theme</button>
     </Layout>
   );
 }

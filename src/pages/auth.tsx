@@ -16,13 +16,16 @@ export default function Auth() {
   }
 
   return (
-    <div className={`flex flex-col h-screen items-center justify-center`}>
-      <div className={`w-1/2`}>
-        <h1
-          className={`
-        text-xl font-bold mb-5
-      `}
-        >
+    <div className={`flex h-screen items-center justify-center`}>
+      <div className={`hidden  md:block md:w-1/2 lg:w-2/3`}>
+        <img
+          src="https://source.unsplash.com/random"
+          alt="Auth Screen Image"
+          className={`h-screen w-full object-cover`}
+        />
+      </div>
+      <div className={`m-10 w-full md:w-1/2 lg:w-1/3`}>
+        <h1 className={`text-3xl font-bold mb-5`}>
           {mode === 'login'
             ? 'Login to access your account'
             : 'Sign-up to create an account'}
@@ -62,6 +65,28 @@ export default function Auth() {
         >
           Login with Google
         </button>
+
+        {mode === 'login' ? (
+          <p className={`mt-8`}>
+            Still haven't an account?
+            <a
+              onClick={() => setMode('signup')}
+              className={`text-blue-500 hover:text-gray-700 font-semibold cursor-pointer`}
+            >
+              Create an account
+            </a>
+          </p>
+        ) : (
+          <p className={`mt-8`}>
+            Already a member?
+            <a
+              onClick={() => setMode('login')}
+              className={`text-blue-500 hover:text-gray-700 font-semibold cursor-pointer`}
+            >
+              Login into you account
+            </a>
+          </p>
+        )}
       </div>
     </div>
   );

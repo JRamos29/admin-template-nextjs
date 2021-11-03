@@ -9,7 +9,7 @@ interface AuthContextProps {
   loginGoogle?: () => Promise<void>;
 }
 
-const AuthContext = createContext<AuthContextProps>({});
+const AuthContext = createContext<AuthContextProps>(null);
 
 interface AuthProviderProps {
   children: any;
@@ -20,11 +20,11 @@ async function normalizedUser(firebaseUser: firebase.User): Promise<User> {
 
   return {
     uid: firebaseUser.uid,
-    name: firebaseUser.name,
+    name: firebaseUser.displayName,
     email: firebaseUser.email,
     token,
     provider: firebaseUser.providerData[0].providerId,
-    imageUrl: firebaseUser.imageUrl,
+    imageUrl: firebaseUser.photoURL,
   };
 }
 
@@ -32,8 +32,15 @@ export function AuthProvider(props: AuthProviderProps) {
   const [user, setUser] = useState<User>(null);
 
   async function loginGoogle() {
-    console.log('Login google');
-    router.push('/');
+    const resp = await firebase
+      .auth()
+      .signInWithPopup(new firebase.auth.GoogleAuthProvider());
+
+    if (resp.user?.email) {
+      const user = await normalizedUser(resp.user);
+      setUser(user);
+      router.push('/');
+    }
   }
 
   return (

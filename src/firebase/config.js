@@ -1,10 +1,6 @@
 // Import the functions you need from the SDKs you need
-import {
-  firebase
-} from "firebase/app";
-import {
-  getAnalytics
-} from "firebase/analytics";
+import { firebase } from 'firebase/app';
+import { getAnalytics } from 'firebase/analytics';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import 'firebase/auth';
@@ -20,7 +16,6 @@ const firebaseConfig = {
   appId: process.env.FIREBASE_APP_ID,
   measurementId: process.env.FIREBASE_MEASUREMENT_ID,
 };
-
 
 // Initialize Firebase
 if (!firebase.apps.length) {

@@ -1,6 +1,6 @@
 import router from 'next/router';
-import { useState } from 'react';
-import { createContext } from 'react';
+import { createContext, useEffect, useState } from 'react';
+import Cookies from 'js-cookie';
 import firebase from '../../firebase/config';
 import User from '../../model/User';
 
@@ -28,19 +28,47 @@ async function normalizedUser(firebaseUser: firebase.User): Promise<User> {
   };
 }
 
+function manageCookie(isLogged: boolean) {
+  if (isLogged) {
+    Cookies.set('admin-template-nextjs-auth', isLogged, {
+      expires: 7,
+    });
+  } else {
+    Cookies.remove('admin-template-nextjs-auth');
+  }
+}
+
 export function AuthProvider(props: AuthProviderProps) {
+  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User>(null);
+
+  async function configSession(firebaseUser) {
+    if (firebaseUser?.email) {
+      const user = await normalizedUser(firebaseUser);
+      setUser(user);
+      manageCookie(true);
+      setLoading(false);
+      return firebaseUser.email;
+    } else {
+      setUser(null);
+      manageCookie(false);
+      setLoading(false);
+      return false;
+    }
+  }
+
+  useEffect(() => {
+    const cancel = firebase.auth().onIdTokenChanged(configSession);
+    return () => cancel();
+  }, []);
 
   async function loginGoogle() {
     const resp = await firebase
       .auth()
       .signInWithPopup(new firebase.auth.GoogleAuthProvider());
 
-    if (resp.user?.email) {
-      const user = await normalizedUser(resp.user);
-      setUser(user);
-      router.push('/');
-    }
+    configSession(resp.user);
+    router.push('/');
   }
 
   return (

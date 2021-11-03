@@ -1,3 +1,4 @@
+import Head from 'next/head';
 import Image from 'next/image';
 import router from 'next/router';
 import loadingImg from '../../../public/images/loading.gif';
@@ -11,7 +12,20 @@ export default function RequireAuth(props: RequireAuthProps) {
   const { user, loading } = useAuth();
 
   function renderContent() {
-    return <>{props.children}</>;
+    return (
+      <>
+        <Head>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `if(!document.cookie?.includes('admin-template-nextjs-auth')) {
+                          window.location.href = "/auth"
+                      }`,
+            }}
+          />
+        </Head>
+        {props.children}
+      </>
+    );
   }
 
   function renderLoading() {

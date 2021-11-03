@@ -4,7 +4,8 @@ import { IconWarning } from '../components/icons/index';
 import useAuth from '../data/hook/useAuth';
 
 export default function Auth() {
-  const { user, loginGoogle } = useAuth();
+  const { signupWithEmailAndPassword, loginWithEmailAndPassword, loginGoogle } =
+    useAuth();
 
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [error, setError] = useState(null);
@@ -12,13 +13,15 @@ export default function Auth() {
   const [password, setPassword] = useState();
   const [confirmPassword, setConfirmPassword] = useState();
 
-  function submit() {
-    if (mode === 'login') {
-      console.log('login');
-      showError('Login Error');
-    } else {
-      console.log('signup');
-      showError('Sign-Up Error');
+  async function submit() {
+    try {
+      if (mode === 'login') {
+        await loginWithEmailAndPassword(email, password);
+      } else {
+        await signupWithEmailAndPassword(email, password);
+      }
+    } catch (e) {
+      showError(e?.message ?? 'Unknown error');
     }
   }
 
@@ -71,14 +74,14 @@ export default function Auth() {
           onChange={setPassword}
           required
         />
-        <AuthInput
+        {/* <AuthInput
           label="Confirm Password"
           type="password"
           value={confirmPassword}
           onChange={setConfirmPassword}
           required
           shouldNotRender={mode === 'login'}
-        />
+        /> */}
         <button
           className={`w-full bg-indigo-500 hover:bg-indigo-400 text-white rounded-lg px-4 py-3 mt-6`}
           onClick={submit}

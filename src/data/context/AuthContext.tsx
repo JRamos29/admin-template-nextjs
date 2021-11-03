@@ -5,7 +5,8 @@ import firebase from '../../firebase/config';
 import User from '../../model/User';
 
 interface AuthContextProps {
-  user: User;
+  user?: User;
+  loading?: boolean;
   loginGoogle?: () => Promise<void>;
   logout?: () => Promise<void>;
 }
@@ -62,6 +63,8 @@ export function AuthProvider(props: AuthProviderProps) {
     if (Cookies.get('admin-template-nextjs-auth')) {
       const cancel = firebase.auth().onIdTokenChanged(configSession);
       return () => cancel();
+    } else {
+      setLoading(false);
     }
   }, []);
 
@@ -90,7 +93,7 @@ export function AuthProvider(props: AuthProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loginGoogle, logout }}>
+    <AuthContext.Provider value={{ user, loading, loginGoogle, logout }}>
       {props.children}
     </AuthContext.Provider>
   );

@@ -7,6 +7,7 @@ import User from '../../model/User';
 interface AuthContextProps {
   user: User;
   loginGoogle?: () => Promise<void>;
+  logout?: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps>(null);
@@ -58,21 +59,38 @@ export function AuthProvider(props: AuthProviderProps) {
   }
 
   useEffect(() => {
-    const cancel = firebase.auth().onIdTokenChanged(configSession);
-    return () => cancel();
+    if (Cookies.get('admin-template-nextjs-auth')) {
+      const cancel = firebase.auth().onIdTokenChanged(configSession);
+      return () => cancel();
+    }
   }, []);
 
   async function loginGoogle() {
-    const resp = await firebase
-      .auth()
-      .signInWithPopup(new firebase.auth.GoogleAuthProvider());
+    try {
+      setLoading(true);
+      const resp = await firebase
+        .auth()
+        .signInWithPopup(new firebase.auth.GoogleAuthProvider());
 
-    configSession(resp.user);
-    router.push('/');
+      configSession(resp.user);
+      router.push('/');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function logout() {
+    try {
+      setLoading(true);
+      await firebase.auth().signOut();
+      await configSession(null);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <AuthContext.Provider value={{ user, loginGoogle }}>
+    <AuthContext.Provider value={{ user, loginGoogle, logout }}>
       {props.children}
     </AuthContext.Provider>
   );

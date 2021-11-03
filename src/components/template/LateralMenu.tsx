@@ -1,3 +1,4 @@
+import useAuth from '../../data/hook/useAuth';
 import MenuItem from './MenuItem';
 import Logo from './Logo';
 import {
@@ -8,6 +9,8 @@ import {
 } from '../icons/index';
 
 export default function LateralMenu() {
+  const { logout } = useAuth();
+
   return (
     <aside
       className={`
@@ -37,7 +40,7 @@ export default function LateralMenu() {
         <MenuItem
           text="Logout"
           icon={IconLogout}
-          onClick={() => console.log('Logout')}
+          onClick={logout}
           className={`
           text-red-600 dark:text-red-400
           hover:bg-red-400 hover:text-white
